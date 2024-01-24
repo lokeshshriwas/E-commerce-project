@@ -1,0 +1,52 @@
+/* Default styles */
+.toolbar {
+  height: 70px;
+}
+
+.title {
+  margin-top: 5%;
+}
+
+.emptyButton {
+  min-width: 150px;
+}
+
+.checkoutButton {
+  min-width: 150px;
+}
+
+.link {
+  text-decoration: none;
+}
+
+.cardDetails {
+  display: flex;
+  margin-top: 10%;
+  width: 100%;
+  justify-content: space-between;
+}
+
+/* Media Query for landscape orientation */
+@media (min-width: 0px) and (orientation: landscape) {
+  .toolbar {
+    min-height: 48px;
+  }
+}
+
+/* Media Query for small screens (less than 600px) */
+@media (max-width: 599px) {
+  .emptyButton {
+    margin-bottom: 5px;
+  }
+}
+
+/* Media Query for screens with width at least 600px */
+@media (min-width: 600px) {
+  .toolbar {
+    min-height: 90px;
+  }
+
+  .emptyButton {
+    margin-right: 20px;
+  }
+}

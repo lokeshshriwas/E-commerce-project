@@ -1,0 +1,85 @@
+/* Default styles */
+.appBar {
+    position: relative;
+  }
+  
+  .toolbar {
+    min-height: 56px;
+  }
+  
+  .layout {
+    margin-top: 5%;
+    width: auto;
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+  
+  .paper {
+    margin-top: 24px;
+    margin-bottom: 24px;
+    padding: 16px;
+  }
+  
+  .stepper {
+    padding: 24px 0 40px;
+  }
+  
+  .buttons {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .button {
+    margin-top: 24px;
+    margin-left: 8px;
+  }
+  
+  .divider {
+    margin: 20px 0;
+  }
+  
+  .spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Media Query for landscape orientation */
+  @media (min-width: 0px) and (orientation: landscape) {
+    .toolbar {
+      min-height: 48px;
+    }
+  }
+  
+  /* Media Query for small screens (less than 600px) */
+  @media (max-width: 599px) {
+    .layout {
+      width: 100%;
+      margin-top: 60px;
+    }
+  
+    .paper {
+      width: 100%;
+      margin-top: 60px;
+    }
+  }
+  
+  /* Media Query for screens with width at least 600px */
+  @media (min-width: 600px) {
+    .toolbar {
+      min-height: 64px;
+    }
+  
+    .layout {
+      width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  
+    .paper {
+      margin-top: 48px;
+      margin-bottom: 48px;
+      padding: 24px;
+    }
+  }
+  
