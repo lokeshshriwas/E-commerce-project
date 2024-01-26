@@ -81,16 +81,18 @@ const AddressForm = ({ checkoutToken, next, back}) => {
             <FormInput label={"First name"} name={"firstName"} />
             <FormInput label={"Last name"} name={"lastName"} />
             <FormInput label={"Address"} name={"address"} />
+            <FormInput label={"Phone No."} name={"phone"} type="number"/>
             <FormInput label={"City"} name={"city"} />
-            <FormInput label={"Email"} name={"email"} />
-            <FormInput label={"ZIP/ Postal code"} name={"zip"} />
+            <FormInput label={"Email"} name={"email"} type={"email"}/>
+            <FormInput label={"ZIP/ Postal code"} name={"zip"} type={"number"}/>
 
             <Grid item xs={12} sm={6}>
-              <InputLabel>Shipping Country</InputLabel>
+              {/* <InputLabel>Shipping Country</InputLabel> */}
               <Select
                 fullWidth
                 value={shippingCountry}
                 onChange={(e) => setShippingCountry(e.target.value)}
+                required
               >
                 {countries.map((country) => (
                   <MenuItem key={country.id} value={country.id}>
@@ -105,6 +107,7 @@ const AddressForm = ({ checkoutToken, next, back}) => {
                 fullWidth
                 value={shippingSubdivision}
                 onChange={(e) => setShippingSubdivision(e.target.value)}
+                required
               >
                 {subdivisions.map((division) => (
                   <MenuItem key={division.id} value={division.id}>
@@ -115,7 +118,7 @@ const AddressForm = ({ checkoutToken, next, back}) => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <InputLabel>Shipping Options</InputLabel>
-              <Select value={shippingOption} fullWidth onChange={(e)=> setShippingOption(e.target.value)}> 
+              <Select value={shippingOption} fullWidth onChange={(e)=> setShippingOption(e.target.value)} required> 
               {options.map((option) => (
                   <MenuItem key={option.id} value={option.id}>
                     {option.label}

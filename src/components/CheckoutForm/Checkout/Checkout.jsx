@@ -7,18 +7,22 @@ import {
   StepLabel,
   Stepper,
   Typography,
+  CssBaseline,
 } from "@mui/material";
 import "./styles.css";
-import React, {useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AddressForm, Confirmation, PaymentForm } from "../index";
 import { commerce } from "../../../lib/commerce";
-
+import {useHistroy} from "react-router-dom"
+  
 const steps = ["Shipping Address", "Payment Details"];
 
-const Checkout = ({ cart }) => {
+const Checkout = ({ cart, onCaptureCheckout, order, error }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [checkoutToken, setCheckoutToken] = useState(null);
-  const [formData, setFormData] = useState({})
+  const [shippingData, setShippingData] = useState({});
+  const [isFinished , setIsFinished] = useState(false)
+  const history = useHistroy()
 
   useEffect(() => {
     const generateToken = async () => {
@@ -28,28 +32,46 @@ const Checkout = ({ cart }) => {
         });
         setCheckoutToken(token);
       } catch (error) {
-        console.log("Token genration error " + error)
+        history.pushState("/")
       }
     };
     generateToken();
   }, []);
 
-  const nextStep = ()=> setActiveStep((prev)=> (prev + 1))
-  const back = ()=> setActiveStep((prev)=> (prev - 1))
+  const nextStep = () => setActiveStep((prev) => prev + 1);
+  const back = () => setActiveStep((prev) => prev - 1);
 
+  const next = (data) => {
+    setShippingData(data);
+    nextStep();
+  };
 
-  const next = (data)=>{
-      setFormData(data)
-      nextStep()
-
+  const timeout = () => {
+    setTimeout(() => {
+        setIsFinished(true)
+    }, 3000);
   }
 
-  if(!checkoutToken) return <h1>loading...</h1>
+  if (!checkoutToken) return <h1>loading...</h1>;
 
-  const Forms = () => (activeStep === 0 ? <AddressForm checkoutToken={checkoutToken} next={next} back={back}/> : <PaymentForm />);
+
+  const Forms = () =>
+    activeStep === 0 ? (
+      <AddressForm checkoutToken={checkoutToken} next={next} back={back} />
+    ) : (
+      <PaymentForm
+        shippingData={shippingData}
+        checkoutToken={checkoutToken}
+        back={back}
+        onCaptureCheckout={onCaptureCheckout}
+        nextStep={nextStep}
+        timeout={timeout}
+      />
+    );
 
   return (
     <>
+      <CssBaseline />
       <div className="toolbar">
         <main className="layout">
           <Paper className="paper">
@@ -63,7 +85,11 @@ const Checkout = ({ cart }) => {
                 </Step>
               ))}
             </Stepper>
-            {activeStep === steps.length ? <Confirmation /> : checkoutToken && <Forms />}
+            {activeStep === steps.length ? (
+              <Confirmation error={error} order={order} isFinished={isFinished}/>
+            ) : (
+              checkoutToken && <Forms />
+            )}
           </Paper>
         </main>
       </div>

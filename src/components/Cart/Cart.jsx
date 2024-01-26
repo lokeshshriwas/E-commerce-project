@@ -34,10 +34,10 @@ const Cart = ({
         ))}
       </Grid>
       <div className="cardDetails">
-        <Typography variant="h4">
+        <Typography variant="h5" >
           Subtotal: {cart.subtotal.formatted_with_symbol}
         </Typography>
-        <div>
+        <div sx={{width :{xs: "160px" , sm: "auto"}}}>
           <Button
             className="emptyButton"
             size="large"
