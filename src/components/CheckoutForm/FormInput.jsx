@@ -15,7 +15,7 @@ const FormInput = ({ label, name, required }) => {
             {...field}
             fullWidth
             label={label}
-            required={required}
+            required
           />
         )}
       />

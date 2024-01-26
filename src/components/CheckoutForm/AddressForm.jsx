@@ -1,52 +1,138 @@
-import React from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
-import { Button, Grid, InputLabel, MenuItem, Select, Typography } from '@mui/material'
-import FormInput from './FormInput'
+import React, { useState, useEffect } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import {
+  Button,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  Typography,
+} from "@mui/material";
+import FormInput from "./FormInput";
+import { commerce } from "../../lib/commerce";
+import { Link } from "react-router-dom";
 
-const AddressForm = () => {
+const AddressForm = ({ checkoutToken, next, back}) => {
+  const [shippingCountries, setShippingCountries] = useState([]);
+  const [shippingCountry, setShippingCountry] = useState("");
+  const [shippingSubdivisions, setShippingSubdivisions] = useState([]);
+  const [shippingSubdivision, setShippingSubdivision] = useState("");
+  const [shippingOptions, setShippingOptions] = useState([]);
+  const [shippingOption, setShippingOption] = useState("");
   const method = useForm();
+
+  const countries = Object.entries(shippingCountries).map(([code, value]) => ({
+    id: code,
+    label: value,
+  }));
+  const subdivisions = Object.entries(shippingSubdivisions).map(
+    ([code, value]) => ({
+      id: code,
+      label: value,
+    })
+  );
+  const options = shippingOptions.map((sO)=> ({id: sO.id, label: `${sO.description} - (${sO.price.formatted_with_symbol})`}))
+
+
+
+  const fetchShippingCountries = async (checkoutTokenId) => {
+    const { countries } = await commerce.services.localeListShippingCountries(
+      checkoutTokenId
+    );
+    setShippingCountries(countries);
+    setShippingCountry(Object.keys(countries)[1]);
+  };
+
+  const fetchSubdivisions = async (countryCode) => {
+    const { subdivisions } = await commerce.services.localeListSubdivisions(
+      countryCode
+    );
+    setShippingSubdivisions(subdivisions);
+    setShippingSubdivision(Object.keys(subdivisions)[1]);
+  };
+
+  const fetchShippingOptions = async (checkoutTokenId, country, region = null) => {
+    const options = await commerce.checkout.getShippingOptions(checkoutTokenId, {country, region,})
+    setShippingOptions(options)
+    setShippingOption(options[0].id)
+  };
+
+
+  useEffect(() => {
+    fetchShippingCountries(checkoutToken.id);
+  }, []);
+
+  useEffect(() => {
+    if (shippingCountry) fetchSubdivisions(shippingCountry);
+  }, [shippingCountry]);
+
+  useEffect(() => {
+    if (shippingSubdivision) fetchShippingOptions(checkoutToken.id, shippingCountry, shippingSubdivision);
+  }, [shippingSubdivision]);
+
   return (
     <>
-      <Typography variant='h6' gutterBottom>Shipping Address</Typography>
+      <Typography variant="h6" gutterBottom>
+        Shipping Address
+      </Typography>
       <FormProvider {...method}>
-        <form onSubmit=''>
+        <form onSubmit={method.handleSubmit((data)=> next({...data, shippingCountry, shippingSubdivision, shippingOption }) )}>
           <Grid container spacing={3}>
-            < FormInput label={"First name"} name={"firstName"} required/>
-            < FormInput label={"Last name"} name={"lastName"} required/>
-            < FormInput label={"Address"} name={"address"} required/>
-            < FormInput label={"City"} name={"city"} required/>
-            < FormInput label={"Email"} name={"email"} required/>
-            < FormInput label={"ZIP/ Postal code"} name={"zip"} required/>
+            <FormInput label={"First name"} name={"firstName"} />
+            <FormInput label={"Last name"} name={"lastName"} />
+            <FormInput label={"Address"} name={"address"} />
+            <FormInput label={"City"} name={"city"} />
+            <FormInput label={"Email"} name={"email"} />
+            <FormInput label={"ZIP/ Postal code"} name={"zip"} />
 
             <Grid item xs={12} sm={6}>
               <InputLabel>Shipping Country</InputLabel>
-              <select value={} fullWidth onChange={}>
-                <MenuItem key={} value={}>
-                  Select me
-                </MenuItem>
-              </select>
+              <Select
+                fullWidth
+                value={shippingCountry}
+                onChange={(e) => setShippingCountry(e.target.value)}
+              >
+                {countries.map((country) => (
+                  <MenuItem key={country.id} value={country.id}>
+                    {country.label}
+                  </MenuItem>
+                ))}
+              </Select>
             </Grid>
             <Grid item xs={12} sm={6}>
               <InputLabel>Shipping Subdivision</InputLabel>
-              <select value={} fullWidth onChange={}>
-                <MenuItem key={} value={}>
-                  Select me
-                </MenuItem>
-              </select>
+              <Select
+                fullWidth
+                value={shippingSubdivision}
+                onChange={(e) => setShippingSubdivision(e.target.value)}
+              >
+                {subdivisions.map((division) => (
+                  <MenuItem key={division.id} value={division.id}>
+                    {division.label}
+                  </MenuItem>
+                ))}
+              </Select>
             </Grid>
             <Grid item xs={12} sm={6}>
               <InputLabel>Shipping Options</InputLabel>
-              <select value={} fullWidth onChange={}>
-                <MenuItem key={} value={}>
-                  Select me
-                </MenuItem>
-              </select>
+              <Select value={shippingOption} fullWidth onChange={(e)=> setShippingOption(e.target.value)}> 
+              {options.map((option) => (
+                  <MenuItem key={option.id} value={option.id}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Select>
             </Grid>
           </Grid>
+          <br />
+          <div style={{display: "flex", justifyContent:"space-between"}}>
+              <Button component={Link} to="/cart" variant="outlined" onClick={back}>Back to Cart</Button>
+              <Button type="submit" color="primary" variant="contained">Next</Button>
+          </div>
         </form>
       </FormProvider>
     </>
-  )
-}
+  );
+};
 
-export default AddressForm
+export default AddressForm;
